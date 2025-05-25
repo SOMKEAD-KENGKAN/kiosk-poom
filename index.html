@@ -1,0 +1,822 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎨 Digital Art Gallery - Professional Demo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNjY3ZWVhIi8+Cjx0ZXh0IHg9IjE2IiB5PSIyMCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+R+C5leC4lg==">
+    <style>
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --text: #ffffff;
+            --bg-light: rgba(255, 255, 255, 0.1);
+            --bg-dark: rgba(0, 0, 0, 0.3);
+            --radius: 15px;
+            --transition: all 0.3s ease;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Kanit', sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Loading Animation */
+        .loading {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .spinner {
+            width: 60px; height: 60px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden { opacity: 0; pointer-events: none; }
+
+        /* Header */
+        .header {
+            background: var(--bg-dark);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo {
+            font-size: 2.5em;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+        }
+
+        .demo-badge {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+            display: inline-block;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .datetime {
+            margin-top: 10px;
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+
+        /* Navigation */
+        .nav {
+            background: var(--bg-light);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: 2px solid rgba(255,255,255,0.3);
+            color: var(--text);
+            padding: 12px 24px;
+            margin: 5px;
+            border-radius: 25px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1em;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.5);
+            transform: translateY(-2px);
+        }
+
+        /* Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .section.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Home Section */
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+            background: var(--bg-light);
+            border-radius: var(--radius);
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero h1 {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero p {
+            font-size: 1.3em;
+            opacity: 0.9;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .feature {
+            background: var(--bg-light);
+            padding: 40px 30px;
+            border-radius: var(--radius);
+            text-align: center;
+            transition: var(--transition);
+            border: 1px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+        }
+
+        .feature:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow);
+            background: rgba(255,255,255,0.15);
+        }
+
+        .feature-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        .feature h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: var(--accent);
+        }
+
+        /* Grid Layouts */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .card {
+            background: var(--bg-light);
+            border-radius: var(--radius);
+            padding: 20px;
+            text-align: center;
+            transition: var(--transition);
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+            background: rgba(255,255,255,0.15);
+        }
+
+        .card-image {
+            width: 100%;
+            aspect-ratio: 1;
+            background: linear-gradient(45deg, var(--accent), var(--primary));
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+        }
+
+        .video-card .card-image {
+            aspect-ratio: 16/9;
+        }
+
+        /* Slideshow */
+        .slideshow {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background: var(--bg-light);
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin: 30px 0;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4em;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .slide.active { opacity: 1; }
+
+        .controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .control-btn {
+            background: var(--bg-light);
+            border: none;
+            color: var(--text);
+            padding: 10px 15px;
+            margin: 0 5px;
+            border-radius: 50%;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .control-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.1);
+        }
+
+        /* About Section */
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .info-card {
+            background: var(--bg-light);
+            padding: 30px;
+            border-radius: var(--radius);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .info-card h3 {
+            color: var(--accent);
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .info-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-card li {
+            padding: 5px 0;
+            opacity: 0.9;
+        }
+
+        .info-card li:before {
+            content: "▶ ";
+            color: var(--accent);
+            margin-right: 10px;
+        }
+
+        .contact {
+            background: var(--bg-light);
+            padding: 30px;
+            border-radius: var(--radius);
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-dark);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin-top: 40px;
+        }
+
+        .footer p {
+            opacity: 0.8;
+            margin: 5px 0;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            margin: 10% auto;
+            padding: 40px;
+            border-radius: var(--radius);
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            top: 15px; right: 20px;
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--text);
+        }
+
+        .close:hover { opacity: 0.7; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .logo { font-size: 2em; }
+            .hero h1 { font-size: 2.5em; }
+            .nav-btn { 
+                margin: 5px;
+                padding: 10px 16px;
+                font-size: 0.9em;
+            }
+            .features { grid-template-columns: 1fr; }
+            .grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+        }
+
+        @media (max-width: 480px) {
+            .container { padding: 20px 10px; }
+            .hero { padding: 40px 15px; }
+            .feature { padding: 20px 15px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading" class="loading">
+        <div>
+            <div class="spinner"></div>
+            <p style="margin-top: 20px;">กำลังโหลด Digital Art Gallery...</p>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">🎨 Digital Art Gallery</div>
+        <div class="demo-badge">PROFESSIONAL DEMO</div>
+        <div class="datetime" id="datetime"></div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <button class="nav-btn active" onclick="showSection('home')">🏠 หน้าหลัก</button>
+        <button class="nav-btn" onclick="showSection('albums')">🎵 อัลบั้ม</button>
+        <button class="nav-btn" onclick="showSection('videos')">🎬 วิดีโอ</button>
+        <button class="nav-btn" onclick="showSection('gallery')">🖼️ แกลเลอรี่</button>
+        <button class="nav-btn" onclick="showSection('about')">📋 เกี่ยวกับ</button>
+    </nav>
+
+    <!-- Content -->
+    <div class="container">
+        <!-- Home Section -->
+        <section id="home" class="section active">
+            <div class="hero">
+                <h1>ระบบแสดงผลงานศิลปินดิจิทัล</h1>
+                <p>เหมาะสำหรับ Digital Signage, Art Gallery, Museum และการนำเสนอผลงานแบบมืออาชีพ</p>
+            </div>
+            
+            <div class="features">
+                <div class="feature" onclick="showDemo('albums')">
+                    <div class="feature-icon">🎵</div>
+                    <h3>ระบบเพลง</h3>
+                    <p>จัดการอัลบั้ม เพลง และ playlist อย่างครบครัน</p>
+                </div>
+                <div class="feature" onclick="showDemo('videos')">
+                    <div class="feature-icon">🎬</div>
+                    <h3>มิวสิควิดีโอ</h3>
+                    <p>แสดงวิดีโอคุณภาพสูง พร้อมระบบควบคุม</p>
+                </div>
+                <div class="feature" onclick="showDemo('gallery')">
+                    <div class="feature-icon">🖼️</div>
+                    <h3>แกลเลอรี่</h3>
+                    <p>สไลด์โชว์ภาพอัตโนมัติ พร้อมเอฟเฟกต์สวยงาม</p>
+                </div>
+                <div class="feature" onclick="showDemo('kiosk')">
+                    <div class="feature-icon">📺</div>
+                    <h3>Kiosk Mode</h3>
+                    <p>โหมดแสดงผลแบบ fullscreen สำหรับจอขนาดใหญ่</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Albums Section -->
+        <section id="albums" class="section">
+            <h2>🎵 อัลบั้มเพลง</h2>
+            <div class="grid">
+                <div class="card" onclick="showAlbumDetail('อัลบั้มตัวอย่าง 1')">
+                    <div class="card-image">🎵</div>
+                    <h3>อัลบั้มตัวอย่าง 1</h3>
+                    <p>ปี 2567 • 12 เพลง</p>
+                </div>
+                <div class="card" onclick="showAlbumDetail('อัลบั้มตัวอย่าง 2')">
+                    <div class="card-image">🎶</div>
+                    <h3>อัลบั้มตัวอย่าง 2</h3>
+                    <p>ปี 2568 • 8 เพลง</p>
+                </div>
+                <div class="card" onclick="showAlbumDetail('Best Collection')">
+                    <div class="card-image">⭐</div>
+                    <h3>Best Collection</h3>
+                    <p>ปี 2569 • 20 เพลง</p>
+                </div>
+                <div class="card" onclick="showAlbumDetail('Live Sessions')">
+                    <div class="card-image">🎤</div>
+                    <h3>Live Sessions</h3>
+                    <p>ปี 2569 • 6 เพลง</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Videos Section -->
+        <section id="videos" class="section">
+            <h2>🎬 มิวสิควิดีโอ</h2>
+            <div class="grid">
+                <div class="card video-card" onclick="showVideoDetail('มิวสิควิดีโอที่ 1')">
+                    <div class="card-image">
+                        🎬
+                        <div style="position: absolute; background: rgba(0,0,0,0.7); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 1em;">▶</div>
+                    </div>
+                    <h3>มิวสิควิดีโอที่ 1</h3>
+                    <p>ระยะเวลา 3:45</p>
+                </div>
+                <div class="card video-card" onclick="showVideoDetail('Behind The Scenes')">
+                    <div class="card-image">
+                        🎥
+                        <div style="position: absolute; background: rgba(0,0,0,0.7); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 1em;">▶</div>
+                    </div>
+                    <h3>Behind The Scenes</h3>
+                    <p>ระยะเวลา 5:30</p>
+                </div>
+                <div class="card video-card" onclick="showVideoDetail('Live Performance')">
+                    <div class="card-image">
+                        🎪
+                        <div style="position: absolute; background: rgba(0,0,0,0.7); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 1em;">▶</div>
+                    </div>
+                    <h3>Live Performance</h3>
+                    <p>ระยะเวลา 6:15</p>
+                </div>
+                <div class="card video-card" onclick="showVideoDetail('Documentary')">
+                    <div class="card-image">
+                        📽️
+                        <div style="position: absolute; background: rgba(0,0,0,0.7); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 1em;">▶</div>
+                    </div>
+                    <h3>Documentary</h3>
+                    <p>ระยะเวลา 12:00</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gallery Section -->
+        <section id="gallery" class="section">
+            <h2>🖼️ แกลเลอรี่ภาพ</h2>
+            <div class="slideshow">
+                <div class="slide active">📸 คอนเสิร์ตครั้งแรก</div>
+                <div class="slide">🎧 การบันทึกเสียง</div>
+                <div class="slide">🎬 การถ่ายทำเอ็มวี</div>
+                <div class="slide">🏆 งานแสดงรางวัล</div>
+                <div class="slide">👥 งานพบปะแฟนเพลง</div>
+            </div>
+            <div class="controls">
+                <button class="control-btn" onclick="previousSlide()">‹</button>
+                <button class="control-btn" onclick="toggleAutoplay()" id="playBtn">⏸️</button>
+                <button class="control-btn" onclick="nextSlide()">›</button>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="section">
+            <h2>📋 เกี่ยวกับระบบ</h2>
+            
+            <div class="about-grid">
+                <div class="info-card">
+                    <h3>🎯 วัตถุประสงค์</h3>
+                    <p>พัฒนาระบบแสดงผลงานศิลปินแบบดิจิทัล เพื่อใช้ในการจัดแสดงผลงาน การนำเสนอ และ Digital Signage</p>
+                </div>
+                
+                <div class="info-card">
+                    <h3>⚡ เทคโนโลยี</h3>
+                    <ul>
+                        <li>HTML5, CSS3, JavaScript</li>
+                        <li>Responsive Design</li>
+                        <li>Progressive Web App (PWA)</li>
+                        <li>Modern Browser APIs</li>
+                    </ul>
+                </div>
+                
+                <div class="info-card">
+                    <h3>📱 รองรับอุปกรณ์</h3>
+                    <ul>
+                        <li>เดสก์ท็อป และ แล็ปท็อป</li>
+                        <li>แท็บเล็ต (iPad, Android)</li>
+                        <li>โทรศัพท์มือถือ</li>
+                        <li>จอขนาดใหญ่ (Digital Signage)</li>
+                    </ul>
+                </div>
+                
+                <div class="info-card">
+                    <h3>🔧 การใช้งาน</h3>
+                    <ul>
+                        <li>Art Gallery และ Museum</li>
+                        <li>Digital Signage</li>
+                        <li>การนำเสนอผลงาน</li>
+                        <li>Kiosk Information</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="contact">
+                <h3>📞 ติดต่อสอบถาม</h3>
+                <div class="contact-info">
+                    <p>📧 Email: your-email@example.com</p>
+                    <p>📱 Line: @yourlineid</p>
+                    <p>🌐 Website: www.yourwebsite.com</p>
+                    <p>📞 Tel: 02-XXX-XXXX</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2568 Digital Art Gallery System | Made with ❤️ in Thailand</p>
+        <p>🚀 Ready for production deployment</p>
+    </footer>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3 id="modalTitle"></h3>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        // Loading Screen
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                document.getElementById('loading').classList.add('hidden');
+            }, 2000);
+        });
+
+        // DateTime Update
+        function updateDateTime() {
+            const now = new Date();
+            const options = {
+                year: 'numeric', month: 'long', day: 'numeric',
+                hour: '2-digit', minute: '2-digit', second: '2-digit',
+                timeZone: 'Asia/Bangkok'
+            };
+            document.getElementById('datetime').textContent = 
+                now.toLocaleDateString('th-TH', options);
+        }
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+
+        // Navigation
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active from all nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Add active to clicked button
+            event.target.classList.add('active');
+        }
+
+        // Slideshow
+        let currentSlide = 0;
+        let autoplay = true;
+        const slides = document.querySelectorAll('.slide');
+
+        function showSlide(index) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[index].classList.add('active');
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        function previousSlide() {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        function toggleAutoplay() {
+            autoplay = !autoplay;
+            document.getElementById('playBtn').textContent = autoplay ? '⏸️' : '▶️';
+        }
+
+        // Auto slideshow
+        setInterval(() => {
+            if (autoplay) nextSlide();
+        }, 4000);
+
+        // Demo Functions
+        function showDemo(type) {
+            const demos = {
+                albums: {
+                    title: '🎵 ระบบอัลบั้มเพลง',
+                    content: `
+                        <p><strong>คุณสมบัติหลัก:</strong></p>
+                        <ul style="text-align: left; margin: 15px 0;">
+                            <li>✅ แสดงปกอัลบั้มแบบ grid</li>
+                            <li>✅ รายชื่อเพลงทั้งหมด</li>
+                            <li>✅ เล่นไฟล์ MP3</li>
+                            <li>✅ แสดงเวลาเพลง</li>
+                            <li>✅ Playlist management</li>
+                        </ul>
+                        <p>เหมาะสำหรับการจัดแสดงผลงานเพลงแบบครบถ้วน</p>
+                    `
+                },
+                videos: {
+                    title: '🎬 ระบบมิวสิควิดีโอ',
+                    content: `
+                        <p><strong>คุณสมบัติหลัก:</strong></p>
+                        <ul style="text-align: left; margin: 15px 0;">
+                            <li>✅ Thumbnail แต่ละวิดีโอ</li>
+                            <li>✅ เล่นแบบ fullscreen</li>
+                            <li>✅ รองรับ MP4, WebM</li>
+                            <li>✅ Auto-play options</li>
+                            <li>✅ Volume control</li>
+                        </ul>
+                        <p>รองรับวิดีโอคุณภาพสูง พร้อมระบบควบคุมครบครัน</p>
+                    `
+                },
+                gallery: {
+                    title: '🖼️ ระบบแกลเลอรี่ภาพ',
+                    content: `
+                        <p><strong>คุณสมบัติหลัก:</strong></p>
+                        <ul style="text-align: left; margin: 15px 0;">
+                            <li>✅ สไลด์โชว์อัตโนมัติ</li>
+                            <li>✅ เอฟเฟกต์การเปลี่ยนภาพ</li>
+                            <li>✅ รองรับ JPG, PNG</li>
+                            <li>✅ Zoom และ pan</li>
+                            <li>✅ Caption สำหรับแต่ละภาพ</li>
+                        </ul>
+                        <p>แสดงภาพผลงานอย่างสวยงามและเป็นระบบ</p>
+                    `
+                },
+                kiosk: {
+                    title: '📺 Kiosk Mode',
+                    content: `
+                        <p><strong>คุณสมบัติหลัก:</strong></p>
+                        <ul style="text-align: left; margin: 15px 0;">
+                            <li>✅ แสดงผลเต็มหน้าจอ</li>
+                            <li>✅ ซ่อน browser controls</li>
+                            <li>✅ Auto-return หน้าหลัก</li>
+                            <li>✅ Touch-friendly interface</li>
+                            <li>✅ รองรับจอขนาดใหญ่</li>
+                        </ul>
+                        <p>เหมาะสำหรับ Digital Signage และ Kiosk Information</p>
+                    `
+                }
+            };
+            showModal(demos[type].title, demos[type].content);
+        }
+
+        function showAlbumDetail(albumName) {
+            showModal(
+                `🎵 ${albumName}`,
+                `
+                <p><strong>รายละเอียดอัลบั้ม:</strong></p>
+                <div style="text-align: left; margin: 15px 0;">
+                    <p>🎼 ชื่ออัลบั้ม: ${albumName}</p>
+                    <p>📅 ปีที่ออก: 2567-2569</p>
+                    <p>🎵 จำนวนเพลง: 8-20 เพลง</p>
+                    <p>⏱️ ระยะเวลารวม: 35-65 นาที</p>
+                    <p>🎨 ประเภท: Pop, Rock, Ballad</p>
+                </div>
+                <p>💡 ในระบบจริงจะมีการเล่นเพลง แสดงปกอัลบั้ม และรายชื่อเพลงทั้งหมด</p>
+                `
+            );
+        }
+
+        function showVideoDetail(videoName) {
+            showModal(
+                `🎬 ${videoName}`,
+                `
+                <p><strong>รายละเอียดวิดีโอ:</strong></p>
+                <div style="text-align: left; margin: 15px 0;">
+                    <p>🎬 ชื่อวิดีโอ: ${videoName}</p>
+                    <p>📅 วันที่ผลิต: 2567-2569</p>
+                    <p>⏱️ ระยะเวลา: 3-12 นาที</p>
+                    <p>📱 คุณภาพ: 4K, 1080p, 720p</p>
+                    <p>🎵 เสียงประกอบ: Stereo, 5.1</p>
+                </div>
+                <p>💡 ในระบบจริงจะเล่นวิดีโอแบบ fullscreen พร้อมระบบควบคุม</p>
+                `
+            );
+        }
+
+        function showModal(title, content) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalBody').innerHTML = content;
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Prevent right-click
+        document.addEventListener('contextmenu', e => e.preventDefault());
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+            if (e.key === 'ArrowLeft') previousSlide();
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === ' ') {
+                e.preventDefault();
+                toggleAutoplay();
+            }
+        });
+
+        console.log('🎨 Digital Art Gallery Demo Ready!');
+        console.log('📧 Contact: your-email@example.com');
+        console.log('🌐 Made with ❤️ in Thailand');
+    </script>
+</body>
+</html>
