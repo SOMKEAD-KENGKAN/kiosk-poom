@@ -3,377 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎨 Digital Art Gallery - Professional Demo</title>
-    
-    <!-- Meta Tags -->
-    <meta name="description" content="ระบบแสดงผลงานศิลปินดิจิทัล เหมาะสำหรับ Digital Signage, Art Gallery และการนำเสนอผลงาน">
-    <meta name="keywords" content="digital gallery, art exhibition, music gallery, kiosk system">
-    <meta name="author" content="Your Company">
-    
-    <!-- Favicon -->
-    <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2NjdlZWEiLz48dGV4dCB4PSIxNiIgeT0iMjAiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkc8L3RleHQ+PC9zdmc+">
-    
-    <!-- External Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Stylesheets -->
+    <title>Digital Art Gallery</title>
     <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Loading Screen -->
-    <div id="loadingScreen" class="loading-screen">
-        <div class="loader">
-            <div class="spinner"></div>
-            <p>กำลังโหลด Digital Art Gallery...</p>
+    <!-- หน้าจอหลัก -->
+    <div id="mainScreen" class="screen active">
+        <div class="hero-section">
+            <div class="artist-profile">
+                <img id="artistPhoto" src="media/artist/profile.jpg" alt="Artist">
+                <div class="artist-info">
+                    <h1 id="artistName">ชื่อศิลปิน</h1>
+                    <p id="artistBio">ประวัติศิลปิน...</p>
+                </div>
+            </div>
+            
+            <div class="navigation-menu">
+                <button class="nav-btn" onclick="showScreen('albumsScreen')">
+                    <span class="icon">🎵</span>
+                    <span>อัลบั้มเพลง</span>
+                </button>
+                <button class="nav-btn" onclick="showScreen('videosScreen')">
+                    <span class="icon">🎬</span>
+                    <span>มิวสิควิดีโอ</span>
+                </button>
+                <button class="nav-btn" onclick="showScreen('galleryScreen')">
+                    <span class="icon">🖼️</span>
+                    <span>แกลเลอรี่</span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="datetime" id="datetime"></div>
+    </div>
+
+    <!-- หน้าจอแสดงอัลบั้ม -->
+    <div id="albumsScreen" class="screen">
+        <div class="screen-header">
+            <button class="back-btn" onclick="showScreen('mainScreen')">← กลับ</button>
+            <h2>อัลบั้มเพลง</h2>
+        </div>
+        
+        <div class="albums-grid" id="albumsGrid">
+            <!-- จะถูกสร้างด้วย JavaScript -->
         </div>
     </div>
 
-    <!-- Main App -->
-    <div id="app" class="app hidden">
-        <!-- Header -->
-        <header class="header">
-            <div class="header-content">
-                <div class="logo-section">
-                    <h1 class="logo">🎨 Digital Art Gallery</h1>
-                    <p class="tagline">Professional Demo System</p>
-                </div>
-                <div class="header-info">
-                    <div class="demo-badge">LIVE DEMO</div>
-                    <div class="datetime" id="datetime"></div>
-                </div>
+    <!-- หน้าจอแสดงรายละเอียดอัลบั้ม -->
+    <div id="albumDetailScreen" class="screen">
+        <div class="screen-header">
+            <button class="back-btn" onclick="showScreen('albumsScreen')">← กลับ</button>
+            <h2 id="albumTitle">ชื่อ���ัลบั้ม</h2>
+        </div>
+        
+        <div class="album-detail">
+            <div class="album-cover-large">
+                <img id="albumCoverLarge" src="" alt="Album Cover">
             </div>
-        </header>
-
-        <!-- Navigation -->
-        <nav class="main-nav" id="mainNav">
-            <button class="nav-btn active" data-section="home">
-                <span class="nav-icon">🏠</span>
-                <span class="nav-text">หน้าหลัก</span>
-            </button>
-            <button class="nav-btn" data-section="albums">
-                <span class="nav-icon">🎵</span>
-                <span class="nav-text">อัลบั้ม</span>
-            </button>
-            <button class="nav-btn" data-section="videos">
-                <span class="nav-icon">🎬</span>
-                <span class="nav-text">วิดีโอ</span>
-            </button>
-            <button class="nav-btn" data-section="gallery">
-                <span class="nav-icon">🖼️</span>
-                <span class="nav-text">แกลเลอรี่</span>
-            </button>
-            <button class="nav-btn" data-section="about">
-                <span class="nav-icon">📋</span>
-                <span class="nav-text">เกี่ยวกับ</span>
-            </button>
-        </nav>
-
-        <!-- Content Sections -->
-        <main class="content" id="mainContent">
-            <!-- Home Section -->
-            <section id="home" class="section active">
-                <div class="hero">
-                    <div class="hero-content">
-                        <h2 class="hero-title">ระบบแสดงผลงานศิลปินดิจิทัล</h2>
-                        <p class="hero-description">
-                            เหมาะสำหรับ Digital Signage, Art Gallery, Museum และการนำเสนอผลงานแบบมืออาชีพ
-                        </p>
-                        
-                        <div class="stats">
-                            <div class="stat-item">
-                                <span class="stat-number">100+</span>
-                                <span class="stat-label">ผลงาน</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-number">4K</span>
-                                <span class="stat-label">คุณภาพ</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-number">24/7</span>
-                                <span class="stat-label">ใช้งาน</span>
-                            </div>
-                        </div>
-                    </div>
+            
+            <div class="album-info">
+                <div class="album-meta">
+                    <h3 id="albumName">ชื่ออัลบั้ม</h3>
+                    <p id="albumYear">ปี พ.ศ.</p>
+                    <p id="albumDescription">รายละเอียดอัลบั้ม</p>
                 </div>
                 
-                <div class="feature-cards">
-                    <div class="feature-card" data-feature="albums">
-                        <div class="feature-icon">🎵</div>
-                        <h3>ระบบเพลง</h3>
-                        <p>จัดการอัลบั้ม เพลง และ playlist อย่างครบครัน</p>
-                        <div class="feature-stats">
-                            <span>50+ อัลบั้ม</span>
-                            <span>500+ เพลง</span>
-                        </div>
-                    </div>
-                    
-                    <div class="feature-card" data-feature="videos">
-                        <div class="feature-icon">🎬</div>
-                        <h3>มิวสิควิดีโอ</h3>
-                        <p>แสดงวิดีโอคุณภาพสูง พร้อมระบบควบคุม</p>
-                        <div class="feature-stats">
-                            <span>4K Resolution</span>
-                            <span>Fullscreen Mode</span>
-                        </div>
-                    </div>
-                    
-                    <div class="feature-card" data-feature="gallery">
-                        <div class="feature-icon">🖼️</div>
-                        <h3>แกลเลอรี่</h3>
-                        <p>สไลด์โชว์ภาพอัตโนมัติ พร้อมเอฟเฟกต์สวยงาม</p>
-                        <div class="feature-stats">
-                            <span>Auto Slideshow</span>
-                            <span>Touch Control</span>
-                        </div>
-                    </div>
-                    
-                    <div class="feature-card" data-feature="kiosk">
-                        <div class="feature-icon">📺</div>
-                        <h3>Kiosk Mode</h3>
-                        <p>โหมดแสดงผลแบบ fullscreen สำหรับจอขนาดใหญ่</p>
-                        <div class="feature-stats">
-                            <span>Touch Screen</span>
-                            <span>Auto Return</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Albums Section -->
-            <section id="albums" class="section">
-                <div class="section-header">
-                    <h2>🎵 อัลบั้มเพลง</h2>
-                    <p>คอลเลกชันเพลงครบครันพร้อมระบบเล่นเพลงที่ทันสมัย</p>
-                </div>
-                <div class="albums-grid" id="albumsGrid">
+                <div class="tracklist" id="tracklist">
                     <!-- จะถูกสร้างด้วย JavaScript -->
                 </div>
-            </section>
-
-            <!-- Videos Section -->
-            <section id="videos" class="section">
-                <div class="section-header">
-                    <h2>🎬 มิวสิควิดีโอ</h2>
-                    <p>แกลเลอรี่วิดีโอคุณภาพสูงพร้อมระบบเล่นแบบมืออาชีพ</p>
-                </div>
-                <div class="videos-grid" id="videosGrid">
-                    <!-- จะถูกสร้างด้วย JavaScript -->
-                </div>
-            </section>
-
-            <!-- Gallery Section -->
-            <section id="gallery" class="section">
-                <div class="section-header">
-                    <h2>🖼️ แกลเลอรี่ภาพ</h2>
-                    <p>สไลด์โชว์ภาพผลงานอัตโนมัติพร้อมระบบควบคุมที่สมบูรณ์</p>
-                </div>
-                
-                <div class="slideshow-container">
-                    <div class="slideshow" id="slideshow">
-                        <!-- จะถูกสร้างด้วย JavaScript -->
-                    </div>
-                    
-                    <div class="slideshow-controls">
-                        <button class="control-btn" id="prevBtn" title="ภาพก่อนหน้า">‹</button>
-                        <button class="control-btn" id="playPauseBtn" title="เล่น/หยุด">⏸️</button>
-                        <button class="control-btn" id="nextBtn" title="ภาพถัดไป">›</button>
-                    </div>
-                    
-                    <div class="slideshow-indicators" id="slideshowIndicators">
-                        <!-- จะถูกสร้างด้วย JavaScript -->
-                    </div>
-                </div>
-            </section>
-
-            <!-- About Section -->
-            <section id="about" class="section">
-                <div class="section-header">
-                    <h2>📋 เกี่ยวกับระบบ</h2>
-                    <p>ข้อมูลโดยละเอียดเกี่ยวกับระบบและการใช้งาน</p>
-                </div>
-                
-                <div class="about-content">
-                    <div class="info-grid">
-                        <div class="info-card">
-                            <div class="info-icon">🎯</div>
-                            <h3>วัตถุประสงค์</h3>
-                            <p>พัฒนาระบบแสดงผลงานศิลปินแบบดิจิทัล เพื่อใช้ในการจัดแสดงผลงาน การนำเสนอ และ Digital Signage อย่างมืออาชีพ</p>
-                        </div>
-                        
-                        <div class="info-card">
-                            <div class="info-icon">⚡</div>
-                            <h3>เทคโนโลยี</h3>
-                            <ul>
-                                <li>HTML5, CSS3, JavaScript (ES6+)</li>
-                                <li>Responsive Design (Mobile-First)</li>
-                                <li>Progressive Web App (PWA)</li>
-                                <li>Modern Browser APIs</li>
-                                <li>CSS Grid & Flexbox</li>
-                            </ul>
-                        </div>
-                        
-                        <div class="info-card">
-                            <div class="info-icon">📱</div>
-                            <h3>รองรับอุปกรณ์</h3>
-                            <ul>
-                                <li>เดสก์ท็อป และ แล็ปท็อป</li>
-                                <li>แท็บเล็ต (iPad, Android)</li>
-                                <li>โทรศัพท์มือถือ (iOS, Android)</li>
-                                <li>จอขนาดใหญ่ (Digital Signage)</li>
-                                <li>จอสัมผัส (Touch Screen)</li>
-                            </ul>
-                        </div>
-                        
-                        <div class="info-card">
-                            <div class="info-icon">🔧</div>
-                            <h3>การใช้งาน</h3>
-                            <ul>
-                                <li>Art Gallery และ Museum</li>
-                                <li>Digital Signage</li>
-                                <li>การนำเสนอผลงาน</li>
-                                <li>Kiosk Information</li>
-                                <li>Event Exhibition</li>
-                            </ul>
-                        </div>
-                        
-                        <div class="info-card">
-                            <div class="info-icon">🌟</div>
-                            <h3>คุณสมบัติเด่น</h3>
-                            <ul>
-                                <li>Interface ใช้งานง่าย</li>
-                                <li>โหลดเร็ว ประสิทธิภาพสูง</li>
-                                <li>ปรับแต่งได้ตามต้องการ</li>
-                                <li>รองรับหลายภาษา</li>
-                                <li>ระบบความปลอดภัย</li>
-                            </ul>
-                        </div>
-                        
-                        <div class="info-card">
-                            <div class="info-icon">📊</div>
-                            <h3>สถิติการใช้งาน</h3>
-                            <ul>
-                                <li>โหลดเร็วกว่า 2 วินาที</li>
-                                <li>รองรับผู้ใช้พร้อมกัน 1000+ คน</li>
-                                <li>ใช้งานได้ 99.9% uptime</li>
-                                <li>ประหยัดแบนด์วิธถึง 70%</li>
-                                <li>รองรับไฟล์สื่อขนาดใหญ่</li>
-                            </ul>
-                        </div>
-                    </div>
-                    
-                    <div class="contact-section">
-                        <h3>📞 ติดต่อสอบถาม</h3>
-                        <p class="contact-description">
-                            พร้อมให้คำปรึกษาและพัฒนาระบบตามความต้องการของคุณ
-                        </p>
-                        
-                        <div class="contact-grid">
-                            <div class="contact-item">
-                                <div class="contact-icon">📧</div>
-                                <div class="contact-info">
-                                    <span class="contact-label">Email</span>
-                                    <span class="contact-value">contact@yourcompany.com</span>
-                                </div>
-                            </div>
-                            
-                            <div class="contact-item">
-                                <div class="contact-icon">📱</div>
-                                <div class="contact-info">
-                                    <span class="contact-label">Line Official</span>
-                                    <span class="contact-value">@yourlineid</span>
-                                </div>
-                            </div>
-                            
-                            <div class="contact-item">
-                                <div class="contact-icon">🌐</div>
-                                <div class="contact-info">
-                                    <span class="contact-label">Website</span>
-                                    <span class="contact-value">www.yourcompany.com</span>
-                                </div>
-                            </div>
-                            
-                            <div class="contact-item">
-                                <div class="contact-icon">📞</div>
-                                <div class="contact-info">
-                                    <span class="contact-label">โทรศัพท์</span>
-                                    <span class="contact-value">02-XXX-XXXX</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="social-links">
-                            <a href="#" class="social-link" title="Facebook">📘</a>
-                            <a href="#" class="social-link" title="Instagram">📷</a>
-                            <a href="#" class="social-link" title="Twitter">🐦</a>
-                            <a href="#" class="social-link" title="LinkedIn">💼</a>
-                            <a href="#" class="social-link" title="YouTube">📺</a>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
-
-        <!-- Footer -->
-        <footer class="footer">
-            <div class="footer-content">
-                <div class="footer-main">
-                    <div class="footer-logo">
-                        <h3>🎨 Digital Art Gallery</h3>
-                        <p>Professional Demo System</p>
-                    </div>
-                    
-                    <div class="footer-links">
-                        <div class="footer-section">
-                            <h4>ระบบ</h4>
-                            <ul>
-                                <li><a href="#albums">อัลบั้มเพลง</a></li>
-                                <li><a href="#videos">มิวสิควิดีโอ</a></li>
-                                <li><a href="#gallery">แกลเลอรี่ภาพ</a></li>
-                                <li><a href="#about">เกี่ยวกับ</a></li>
-                            </ul>
-                        </div>
-                        
-                        <div class="footer-section">
-                            <h4>ติดต่อ</h4>
-                            <ul>
-                                <li>📧 contact@yourcompany.com</li>
-                                <li>📞 02-XXX-XXXX</li>
-                                <li>📱 @yourlineid</li>
-                                <li>🌐 www.yourcompany.com</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="footer-bottom">
-                    <p>&copy; 2568 Digital Art Gallery System | Made with ❤️ in Thailand</p>
-                    <p>🚀 Ready for production deployment | Version 2.0</p>
-                </div>
             </div>
-        </footer>
-    </div>
-
-    <!-- Demo Modal -->
-    <div id="demoModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modalTitle"></h3>
-                <button class="modal-close" id="modalClose">&times;</button>
+        </div>
+        
+        <div class="audio-player" id="audioPlayer" style="display: none;">
+            <div class="player-info">
+                <span id="nowPlaying">กำลังเล่น: </span>
             </div>
-            <div class="modal-body" id="modalBody"></div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" id="modalAction">ดูรายละเอียด</button>
-                <button class="btn btn-secondary" id="modalClose2">ปิด</button>
-            </div>
+            <audio id="audioElement" controls></audio>
         </div>
     </div>
 
-    <!-- Back to Top Button -->
-    <button id="backToTop" class="back-to-top" title="กลับไปด้านบน">
-        ↑
-    </button>
+    <!-- หน้าจอมิวสิควิดีโอ -->
+    <div id="videosScreen" class="screen">
+        <div class="screen-header">
+            <button class="back-btn" onclick="showScreen('mainScreen')">← กลับ</button>
+            <h2>มิวสิควิดีโอ</h2>
+        </div>
+        
+        <div class="videos-grid" id="videosGrid">
+            <!-- จะถูกสร้างด้วย JavaScript -->
+        </div>
+    </div>
 
-    <!-- JavaScript -->
-    <script src="js/script.js"></script>
+    <!-- หน้าจอเล่นวิดีโอ -->
+    <div id="videoPlayerScreen" class="screen">
+        <div class="video-container">
+            <button class="close-video" onclick="closeVideo()">×</button>
+            <video id="videoPlayer" controls>
+                <source src="" type="video/mp4">
+            </video>
+        </div>
+    </div>
+
+    <!-- หน้าจอแกลเลอรี่ -->
+    <div id="galleryScreen" class="screen">
+        <div class="screen-header">
+            <button class="back-btn" onclick="showScreen('mainScreen')">← กลับ</button>
+            <h2>แกลเลอรี่ภาพ</h2>
+        </div>
+        
+        <div class="photo-slideshow" id="photoSlideshow">
+            <!-- จะถูกสร้างด้วย JavaScript -->
+        </div>
+    </div>
+
+    <script src="js/gallery.js"></script>
 </body>
 </html>
